@@ -11,29 +11,87 @@ exports.update = async (req, res) => {
       order_status === "shipping" &&
       req.body.data &&
       req.body.data.datetime &&
-      req.body.data.datetime.lenght !== 0
+      req.body.data.datetime.length !== 0
     ) {
-      const result = await Courier.findOneAndUpdate(
-        {
+      let result = null;
+      if (
+        req.body.data.width &&
+        req.body.data.height &&
+        req.body.data.length &&
+        req.body.data.price
+      ) {
+        const findPartnerId = await Courier.findOne({
           tracking_code: tracking_code,
-        },
-        {
-          $set: {
-            courier_status: order_status,
-            datetime_shipping: req.body.data.datetime,
-          },
-        }
-      );
+        });
+        const findPartner = await Partners.findOne({
+          _id: findPartnerId.partner_id,
+        });
 
-      await Partners.findOne({ _id: result.partner_id }).then(async (json) => {
-        console.log("หาค่าเจอเเล้ว");
-        if (json.partner_webhook)
-          await axios.post(`${json.partner_webhook}`, {
+        result = await Courier.findOneAndUpdate(
+          {
             tracking_code: tracking_code,
-            order_status: order_status,
-            datetime: req.body.data.datetime,
-          });
-      });
+          },
+          {
+            $set: {
+              courier_status: order_status,
+              datetime_shipping: req.body.data.datetime,
+              price:
+                (parseFloat(req.body.data.price) *
+                  (findPartner.partner_percent + 100)) /
+                100,
+              parcel: {
+                weight: req.body.data.weight,
+                width: req.body.data.width,
+                length: req.body.data.length,
+                height: req.body.data.height,
+              },
+            },
+          }
+        );
+
+        await Partners.findOne({ _id: result.partner_id }).then(
+          async (json) => {
+            if (json.partner_webhook)
+              await axios.post(`${json.partner_webhook}`, {
+                courier_status: order_status,
+                datetime_shipping: req.body.data.datetime,
+                price:
+                  (parseFloat(req.body.data.price) *
+                    (findPartner.partner_percent + 100)) /
+                  100,
+                parcel: {
+                  weight: req.body.data.weight,
+                  width: req.body.data.width,
+                  length: req.body.data.length,
+                  height: req.body.data.height,
+                },
+              });
+          }
+        );
+      } else {
+        result = await Courier.findOneAndUpdate(
+          {
+            tracking_code: tracking_code,
+          },
+          {
+            $set: {
+              courier_status: order_status,
+              datetime_shipping: req.body.data.datetime,
+            },
+          }
+        );
+
+        await Partners.findOne({ _id: result.partner_id }).then(
+          async (json) => {
+            if (json.partner_webhook)
+              await axios.post(`${json.partner_webhook}`, {
+                tracking_code: tracking_code,
+                order_status: order_status,
+                datetime: req.body.data.datetime,
+              });
+          }
+        );
+      }
     } else {
       const result = await Courier.findOneAndUpdate(
         {
