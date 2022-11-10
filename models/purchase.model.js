@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 
 const PurchaseSchema = new mongoose.Schema({
@@ -10,14 +9,6 @@ const PurchaseSchema = new mongoose.Schema({
   purchase_status: { type: String, required: false, default: "unpaid" },
   //   partner_service_charge: { type: Number, required: false, default: 0 },
 });
-
-PurchaseSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign(
-    { _id: this._id, name: this.partner_name, level: "partner" },
-    process.env.JWTPRIVATEKEY
-  );
-  return token;
-};
 
 const Purchase = mongoose.model("purchase", PurchaseSchema);
 

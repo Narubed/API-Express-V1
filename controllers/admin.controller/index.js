@@ -195,6 +195,7 @@ exports.findByEmail = async (req, res) => {
 
 exports.findMe = async (req, res) => {
   const { decoded } = req;
+  console.log("decoded=>>", decoded);
   try {
     Admins.findOne({ _id: decoded._id })
       .then((data) => {

@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const partner = require("../controllers/partner.controller");
 const auth = require("../lib/auth");
+const authPartner = require("../lib/auth-partner");
 
-router.get("/", partner.findAll); // auth admin
+router.get("/",auth, partner.findAll); // auth admin
 router.get("/:id", partner.findOne); // auth admin
 
 router.post("/",  partner.create); // auth admin
