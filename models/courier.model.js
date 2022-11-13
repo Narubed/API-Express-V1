@@ -43,6 +43,7 @@ const CourierSchema = new mongoose.Schema({
     height: { type: String, required: false, default: "" },
   },
   courier_tracking_code: { type: String, required: false, default: "" },
+  courier_cutarourd: { type: String, required: false, default: "" },
 });
 
 CourierSchema.methods.generateAuthToken = function () {
@@ -96,6 +97,7 @@ const validate = (data) => {
       height: Joi.number().default(0),
     }),
     courier_tracking_code: Joi.string().default(""),
+    courier_cutarourd: Joi.string().default(""),
   });
   return schema.validate(data);
 };
