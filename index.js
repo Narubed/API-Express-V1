@@ -18,11 +18,11 @@ app.get("/v1/express/", (req, res) => {
 });
 app.use("/v1/express/signin-admin", require("./routes/signin.admin"));
 
-app.use("/v1/express/check-price", require("./routes/check.price"));
-app.use("/v1/express/booking", require("./routes/booking"));
-app.use("/v1/express/webhook", require("./routes/web.hook"));
-app.use("/v1/express/tracking", require("./routes/tracking"));
-app.use("/v1/express/label", require("./routes/label"));
+app.use("/v1/express/check-price", require("./routes/check.price")); // ออกนอก
+app.use("/v1/express/booking", require("./routes/booking")); // ออกนอก
+app.use("/v1/express/webhook", require("./routes/web.hook")); // ออกนอก
+app.use("/v1/express/tracking", require("./routes/tracking")); // ออกนอก
+app.use("/v1/express/label", require("./routes/label")); // ออกนอก
 
 //////////////-----------------------------///////////////
 app.use("/v1/express/admins", require("./routes/admin"));

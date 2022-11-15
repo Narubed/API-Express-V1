@@ -155,3 +155,29 @@ exports.findByTracking = async (req, res) => {
     });
   }
 };
+
+exports.findByTaxCutAround = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    Courier.find({ courier_cutarourd: id })
+      .then((data) => {
+        if (!data)
+          res
+            .status(404)
+            .send({ message: "ไม่สามารถหารายงานนี้ได้", status: false });
+        else res.send({ data, status: true });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: "มีบางอย่างผิดพลาด",
+          status: false,
+        });
+      });
+  } catch (error) {
+    res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+    });
+  }
+};
